@@ -1,4 +1,3 @@
-// server/index.js
 const express = require("express");
 const cors = require("cors");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
@@ -27,8 +26,6 @@ async function run() {
     const db = client.db("FreeMarket");
     const jobCollection = db.collection("jobs");
 
-
-    
     app.get("/latestjobs", async (req, res) => {
       try {
         const latestJobs = await jobCollection
@@ -46,8 +43,6 @@ async function run() {
       }
     });
 
-
-
     app.get("/alljobs", async (req, res) => {
       try {
         const jobs = await jobCollection
@@ -59,7 +54,6 @@ async function run() {
         res.status(500).send({ message: "Failed to fetch jobs", error: err });
       }
     });
-
 
     app.post("/addjob", async (req, res) => {
       try {
@@ -82,8 +76,6 @@ async function run() {
       }
     });
 
-
-
     app.get("/alljobs/:id", async (req, res) => {
       try {
         const id = req.params.id;
@@ -93,8 +85,6 @@ async function run() {
         res.status(500).send({ message: "Failed to fetch job", error: err });
       }
     });
-
-
 
     app.put("/updatejob/:id", async (req, res) => {
       try {
@@ -114,8 +104,6 @@ async function run() {
       }
     });
 
-    
-
     app.delete("/deletejob/:id", async (req, res) => {
       try {
         const id = req.params.id;
@@ -127,8 +115,6 @@ async function run() {
           .send({ success: false, message: "Failed to delete job" });
       }
     });
-
-    
 
     app.get("/my-added-jobs/:email", async (req, res) => {
       try {
@@ -142,8 +128,6 @@ async function run() {
       }
     });
 
-
-
     app.get("/my-accepted-tasks/:email", async (req, res) => {
       try {
         const email = req.params.email;
@@ -152,26 +136,23 @@ async function run() {
           .toArray();
         res.status(200).send(jobs);
       } catch (err) {
-        res
-          .status(500)
-          .send({
-            success: false,
-            message: "Failed to fetch my accepted tasks",
-          });
+        res.status(500).send({
+          success: false,
+          message: "Failed to fetch my accepted tasks",
+        });
       }
     });
   } catch (err) {
-    console.error("❌ Error connecting to MongoDB:", err);
+    console.error("Error connecting to MongoDB:", err);
   }
 }
 
 run().catch(console.dir);
 
-
 app.get("/", (req, res) => {
-  res.send("🚀 FreeMarket Server is running!");
+  res.send("FreeMarket Server is running!");
 });
 
 app.listen(port, () => {
-  console.log(`🔥 Server running on http://localhost:${port}`);
+  console.log(`Server running on http://localhost:${port}`);
 });
