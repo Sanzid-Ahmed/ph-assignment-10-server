@@ -60,7 +60,7 @@ async function run() {
         const job = req.body;
         const newJob = {
           title: job.title,
-          postedBy: job.userName || "Anonymous",
+          postedBy: job.postedBy || "Anonymous",
           category: job.category || "General",
           summary: job.summary || job.description || "",
           coverImage: job.coverImage || "",
