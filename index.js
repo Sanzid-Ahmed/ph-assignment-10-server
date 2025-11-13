@@ -1,16 +1,14 @@
 const express = require("express");
 const cors = require("cors");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
-require("dotenv").config()
+require("dotenv").config();
 const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
 
-
-const uri =
-  `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.cynajx1.mongodb.net/?appName=Cluster0`;
+const uri = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.cynajx1.mongodb.net/?appName=Cluster0`;
 const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,
@@ -21,7 +19,6 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    await client.connect();
     console.log("Connected to MongoDB successfully!");
 
     const db = client.db("FreeMarket");
@@ -92,14 +89,33 @@ async function run() {
       try {
         const id = req.params.id;
         const updatedJob = req.body;
+        const filter = { _id: new ObjectId(id) };
 
-        const result = await jobCollection.updateOne(
-          { _id: new ObjectId(id) },
-          { $set: updatedJob }
-        );
+        const updateFields = {};
+        if (updatedJob.title) updateFields.title = updatedJob.title;
+        if (updatedJob.category) updateFields.category = updatedJob.category;
+        if (updatedJob.salary) updateFields.salary = updatedJob.salary;
+        if (updatedJob.summary) updateFields.summary = updatedJob.summary;
+        if (updatedJob.coverImage)
+          updateFields.coverImage = updatedJob.coverImage;
+        if (updatedJob.userEmail) updateFields.userEmail = updatedJob.userEmail;
+        if (updatedJob.acceptedByEmail)
+          updateFields.acceptedByEmail = updatedJob.acceptedByEmail;
+        updateFields.updatedAt = new Date();
+
+        const result = await jobCollection.updateOne(filter, {
+          $set: updateFields,
+        });
+
+        if (result.modifiedCount === 0) {
+          return res
+            .status(404)
+            .send({ success: false, message: "Job not found" });
+        }
 
         res.status(200).send({ success: true, data: result });
       } catch (err) {
+        console.error("Error updating job:", err);
         res
           .status(500)
           .send({ success: false, message: "Failed to update job" });
