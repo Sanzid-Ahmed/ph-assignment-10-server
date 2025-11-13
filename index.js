@@ -64,6 +64,7 @@ async function run() {
           category: job.category || "General",
           summary: job.summary || job.description || "",
           coverImage: job.coverImage || "",
+          salary: job.salary || "",
           userEmail: job.userEmail || "",
           createdAt: new Date(),
           acceptedByEmail: job.acceptedByEmail || null,
